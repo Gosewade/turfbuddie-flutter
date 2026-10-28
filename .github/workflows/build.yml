@@ -1,12 +1,47 @@
 
+name: Build TurfBuddie APK + Web + iOS
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - run: flutter pub get
+      - run: flutter build apk --release
+      - run: flutter build web --release
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: TurfBuddie-APK
+          path: build/app/outputs/flutter-apk/app-release.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: TurfBuddie-Web
+          path: build/web/
+
   build-ios:
     runs-on: macos-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@v2
         with:
           channel: stable
           cache: true
@@ -17,18 +52,16 @@
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Build unsigned iOS app
+      - name: Build iOS
         run: flutter build ios --release --no-codesign
 
       - name: Package IPA
         run: |
           mkdir -p Payload
           cp -R build/ios/iphoneos/Runner.app Payload/Runner.app
-          zip -r TurfBuddie-unsigned.ipa Payload
+          /usr/bin/zip -r TurfBuddie-unsigned.ipa Payload
 
-      - name: Upload IPA
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
-          name: TurfBuddie-unsigned-IPA
+          name: TurfBuddie-iOS-unsigned
           path: TurfBuddie-unsigned.ipa
-          if-no-files-found: error
