@@ -110,8 +110,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               _row('Base Price (${widget.hours.length} slots)', rupee(pb.base)),
               if (pb.couponDiscount > 0)
                 _row('Coupon ($couponCode)', '-${rupee(pb.couponDiscount)}', valueColor: AppColors.green),
-              if (pb.pointsDiscount > 0)
-                _row('Loyalty points', '-${rupee(pb.pointsDiscount)}', valueColor: AppColors.green),
               CheckboxListTile(
                 contentPadding: EdgeInsets.zero,
                 controlAffinity: ListTileControlAffinity.leading,
@@ -159,6 +157,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               const Divider(height: 28),
               _row('GST (${(Config.gstRate * 100).round()}%)', rupee(pb.gst), bold: true),
               _row('Platform Fee', rupee(pb.platformFee), bold: true),
+              if (pb.pointsDiscount > 0)
+                _row('Redeemed loyalty points', '-${rupee(pb.pointsDiscount)}', valueColor: AppColors.green, bold: true),
               const SizedBox(height: 6),
               Row(children: [
                 const Text('Total Amount', style: TextStyle(fontSize: 21, fontWeight: FontWeight.w900)),

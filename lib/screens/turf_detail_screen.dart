@@ -167,7 +167,7 @@ class _TurfDetailScreenState extends State<TurfDetailScreen> {
               crossAxisSpacing: 12,
               childAspectRatio: 2.3,
               children: [
-                for (final h in t.slotHours) _slot(h, t, cs),
+                for (final h in _orderedHours(t)) _slot(h, t, cs),
               ],
             ),
           const SizedBox(height: 10),
@@ -190,6 +190,18 @@ class _TurfDetailScreenState extends State<TurfDetailScreen> {
         ),
       ),
     );
+  }
+
+  /// Available slots first (in time order), booked/past slots at the end.
+  List<int> _orderedHours(Turf t) {
+    bool unavailable(int h) => booked.contains(h) || _isPast(h);
+    final l = [...t.slotHours];
+    l.sort((a, b) {
+      final ua = unavailable(a), ub = unavailable(b);
+      if (ua == ub) return a.compareTo(b);
+      return ua ? 1 : -1;
+    });
+    return l;
   }
 
   Widget _slot(int h, Turf t, ColorScheme cs) {

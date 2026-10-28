@@ -44,9 +44,6 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(width: 12),
               Expanded(child: _Quick('\u{1F3C6}', 'Tournaments', 'Compete & win', () => s.update(() => s.tab = AppState.tabTournaments))),
             ]),
-            const SizedBox(height: 12),
-            _Quick('\u{1F9EE}', 'Match Calculator', 'Cost per player & cricket run rate',
-                () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MatchCalcScreen()))),
             const SizedBox(height: 22),
             _title('Top Rated Turfs', () => s.update(() {
                   s.sort = SortBy.rating;
@@ -84,6 +81,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 })),
             const SizedBox(height: 12),
             for (final t in near.take(4)) TurfRowCard(t),
+            const SizedBox(height: 10),
+            _Quick('\u{1F9EE}', 'Match Calculator', 'Cost per player & cricket run rate',
+                () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MatchCalcScreen()))),
           ],
         ),
       ),
@@ -101,18 +101,23 @@ class _Quick extends StatelessWidget {
   final String emoji, title, sub;
   final VoidCallback onTap;
   @override
-  Widget build(BuildContext context) => AppCard(
-        onTap: onTap,
-        child: Row(children: [
-          Text(emoji, style: const TextStyle(fontSize: 28)),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(title, style: const TextStyle(fontWeight: FontWeight.w800)),
-              Text(sub, style: const TextStyle(color: Colors.grey, fontSize: 11)),
+  Widget build(BuildContext context) => SizedBox(
+        height: 78, // fixed so every quick card has the same size
+        child: AppCard(
+          onTap: onTap,
+          child: Center(
+            child: Row(children: [
+              Text(emoji, style: const TextStyle(fontSize: 28)),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text(title, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w800)),
+                  Text(sub, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.grey, fontSize: 11)),
+                ]),
+              ),
             ]),
           ),
-        ]),
+        ),
       );
 }
 
@@ -125,40 +130,46 @@ class _Featured extends StatelessWidget {
       onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => TurfDetailScreen(turf: t))),
       child: Container(
         margin: const EdgeInsets.only(right: 10),
-        decoration: BoxDecoration(
+        child: ClipRRect(
           borderRadius: BorderRadius.circular(22),
-          gradient: const LinearGradient(colors: [Color(0xFF0F2A1D), Color(0xFF1F7A4A)], begin: Alignment.topLeft, end: Alignment.bottomRight),
+          child: Stack(children: [
+            Positioned.fill(child: Image.asset(turfPhoto(t), fit: BoxFit.cover)),
+            Positioned.fill(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(colors: [Colors.transparent, Colors.black.withAlpha(170)], begin: Alignment.center, end: Alignment.bottomCenter),
+                ),
+              ),
+            ),
+            Positioned(
+              top: 14,
+              right: 14,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
+                child: Text(rupee(t.pricePerHour), style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w900)),
+              ),
+            ),
+            Positioned(
+              left: 14,
+              bottom: 14,
+              right: 90,
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+                Text(t.name, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w900)),
+                Text('\u{1F4CD} ${t.area}', maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.white70, fontSize: 12)),
+              ]),
+            ),
+            Positioned(
+              right: 14,
+              bottom: 14,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(color: AppColors.amber, borderRadius: BorderRadius.circular(14)),
+                child: Text('\u2606 ${t.rating}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900)),
+              ),
+            ),
+          ]),
         ),
-        child: Stack(children: [
-          Center(child: Text(sportEmoji[t.sports.first] ?? '\u26BD', style: const TextStyle(fontSize: 64))),
-          Positioned(
-            top: 14,
-            right: 14,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
-              child: Text(rupee(t.pricePerHour), style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w900)),
-            ),
-          ),
-          Positioned(
-            left: 14,
-            bottom: 14,
-            right: 90,
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-              Text(t.name, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w900)),
-              Text('\u{1F4CD} ${t.area}', maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.white70, fontSize: 12)),
-            ]),
-          ),
-          Positioned(
-            right: 14,
-            bottom: 14,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              decoration: BoxDecoration(color: AppColors.amber, borderRadius: BorderRadius.circular(14)),
-              child: Text('\u2606 ${t.rating}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900)),
-            ),
-          ),
-        ]),
       ),
     );
   }

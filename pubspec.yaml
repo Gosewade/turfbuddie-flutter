@@ -19,3 +19,6 @@ flutter:
   uses-material-design: true
   assets:
     - assets/logo.png
+    - assets/turf_1.jpg
+    - assets/turf_2.jpg
+    - assets/turf_3.jpg

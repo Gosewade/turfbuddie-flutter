@@ -38,9 +38,9 @@ class BookingDetailScreen extends StatelessWidget {
             child: Column(children: [
               _r('Base price (${b.hours.length} slots)', rupee(b.price.base)),
               if (b.price.couponDiscount > 0) _r('Coupon', '-${rupee(b.price.couponDiscount)}'),
-              if (b.price.pointsDiscount > 0) _r('Loyalty points', '-${rupee(b.price.pointsDiscount)}'),
               _r('Platform fee', rupee(b.price.platformFee)),
               _r('GST', rupee(b.price.gst)),
+              if (b.price.pointsDiscount > 0) _r('Redeemed loyalty points', '-${rupee(b.price.pointsDiscount)}'),
               const Divider(),
               _r('Total', rupee(b.price.total), big: true),
             ]),

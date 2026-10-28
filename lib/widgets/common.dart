@@ -131,30 +131,21 @@ class TitleGreen extends StatelessWidget {
       ));
 }
 
-const _gradients = [
-  [Color(0xFF14532D), Color(0xFF22C55E)],
-  [Color(0xFF065F46), Color(0xFF34D399)],
-  [Color(0xFF166534), Color(0xFF86EFAC)],
-  [Color(0xFF0F3D2E), Color(0xFF16A34A)],
-];
+String turfPhoto(Turf t) => 'assets/turf_${t.colorIndex % 3 + 1}.jpg';
 
 class TurfThumb extends StatelessWidget {
   const TurfThumb(this.turf, {super.key, this.height = 150});
   final Turf turf;
   final double height;
   @override
-  Widget build(BuildContext context) => Container(
-        height: height,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(18),
-          gradient: LinearGradient(
-              colors: _gradients[turf.colorIndex % _gradients.length],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight),
+  Widget build(BuildContext context) => ClipRRect(
+        borderRadius: BorderRadius.circular(18),
+        child: SizedBox(
+          height: height,
+          width: double.infinity,
+          // Placeholder photo. Swap for Image.network(turf.imageUrl) when real photos exist.
+          child: Image.asset(turfPhoto(turf), fit: BoxFit.cover),
         ),
-        alignment: Alignment.center,
-        child: Text(sportEmoji[turf.sports.first] ?? '\u26BD', style: const TextStyle(fontSize: 56)),
       );
 }
 
@@ -292,29 +283,27 @@ class GreenHeader extends StatelessWidget {
   final String? subtitle;
   final IconData? icon;
   final VoidCallback? onTap;
-  final bool dark, tall;
+  final bool dark, tall; // tall kept for compatibility, header is compact now
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      constraints: BoxConstraints(minHeight: tall ? 190 : 0),
-      padding: EdgeInsets.fromLTRB(20, MediaQuery.of(context).padding.top + 28, 20, 22),
+      padding: EdgeInsets.fromLTRB(20, MediaQuery.of(context).padding.top + 12, 20, 14),
       decoration: BoxDecoration(
         color: dark ? null : AppColors.header,
         gradient: dark
             ? const LinearGradient(colors: [Color(0xFF2B3B2F), Color(0xFF0F1A12)], begin: Alignment.topCenter, end: Alignment.bottomCenter)
             : null,
       ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.end, children: [
-        if (tall) const SizedBox(height: 60),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
         if (subtitle != null)
-          Text(subtitle!, style: const TextStyle(color: Colors.white70, fontSize: 17, fontWeight: FontWeight.w500)),
+          Text(subtitle!, style: const TextStyle(color: Colors.white70, fontSize: 14, fontWeight: FontWeight.w500)),
         GestureDetector(
           onTap: onTap,
           child: Row(mainAxisSize: MainAxisSize.min, children: [
-            if (icon != null) ...[Icon(icon, color: Colors.white, size: 24), const SizedBox(width: 4)],
-            Flexible(child: Text(title, style: const TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.w900))),
+            if (icon != null) ...[Icon(icon, color: Colors.white, size: 22), const SizedBox(width: 4)],
+            Flexible(child: Text(title, style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w900))),
           ]),
         ),
       ]),

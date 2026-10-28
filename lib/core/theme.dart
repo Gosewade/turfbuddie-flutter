@@ -40,8 +40,9 @@ class AppTheme {
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: bg,
         indicatorColor: AppColors.greenSoft,
+        labelPadding: EdgeInsets.zero,
         labelTextStyle: WidgetStateProperty.all(
-            const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+            const TextStyle(fontSize: 10.5, fontWeight: FontWeight.w600, letterSpacing: -0.2)),
       ),
     );
   }
